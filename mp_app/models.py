@@ -21,8 +21,8 @@ class Status(Enum):
 class TitlePrefix(BaseModel):
     value: str
 
-    class DocumentMeta:
-        collection_name = 'title_prefix'
+    class Settings:
+        name = 'title_prefix'
 
     def __repr__(self):
         return f'<TitlePrefix {self.value}>'
@@ -35,8 +35,8 @@ class GeoData(Document):
     data: Point
     altitude: Indexed(int)
 
-    class DocumentMeta:
-        collection_name = 'geo_data'
+    class Settings:
+        name = 'geo_data'
 
     def __repr__(self):
         return f'<GeoData {self.data.coordinates}|{self.altitude}>'
@@ -49,8 +49,8 @@ class PhotoData(Document):
     name: str
     uuid: UUID4
 
-    class DocumentMeta:
-        collection_name = 'photo_data'
+    class Settings:
+        name = 'photo_data'
 
     def __repr__(self):
         return f'<PhotoData {self.uuid}>'
@@ -65,8 +65,8 @@ class Person(Document):
     first_name: str
     last_name: str = None
 
-    class DocumentMeta:
-        collection_name = 'person'
+    class Settings:
+        name = 'person'
 
     def __repr__(self):
         return f'<Person {self.username}>'
@@ -122,8 +122,8 @@ class MountainPass(Document):
                 }
         }
 
-    class DocumentMeta:
-        collection_name = 'mountain_pass'
+    class Settings:
+        name = 'mountain_pass'
 
     def __repr__(self):
         return f'<MountainPass {self.title}>'
