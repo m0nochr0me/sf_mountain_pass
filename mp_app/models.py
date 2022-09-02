@@ -82,7 +82,45 @@ class MountainPass(Document):
     timestamp: datetime
     person: Link[Person]
     geodata: Link[GeoData]
+    photo: List[Link[PhotoData]]
     status: Status = Status.NEW
+
+    class Config:
+        schema_extra = {
+            'example':
+                {
+                    'title': 'Dyatlov',
+                    'title_prefix': {
+                        'value': 'per.'
+                    },
+                    'alt_titles': [
+                        'Schmyatlov'
+                    ],
+                    'timestamp': '2022-09-02T02:42:04.340Z',
+                    'person': {
+                        'email': 'john_doe_1969@example.com',
+                        'username': 'johndoe1969',
+                        'first_name': 'John',
+                        'last_name': 'Doe'
+                    },
+                    'geodata': {
+                        'data': {
+                            'coordinates': [
+                                '1.33',
+                                '-2.66'
+                            ],
+                            'type': 'Point'
+                        },
+                        'altitude': 2789
+                    },
+                    'photo': [
+                        {
+                            'name': 'Overlook',
+                            'uuid': '46f1bda0-1c3c-4bba-a113-80c7433b520e'
+                        }
+                    ]
+                }
+        }
 
     class DocumentMeta:
         collection_name = 'mountain_pass'
