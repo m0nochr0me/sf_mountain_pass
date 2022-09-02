@@ -6,6 +6,8 @@ Core
 import asyncio
 import os
 from dotenv import load_dotenv
+from bson.binary import UuidRepresentation
+from bson.codec_options import DEFAULT_CODEC_OPTIONS
 import motor.motor_asyncio
 from pathlib import Path
 from fastapi import FastAPI
@@ -18,7 +20,9 @@ load_dotenv()
 
 # DB
 db_client = motor.motor_asyncio.AsyncIOMotorClient(os.environ.get('FSTR_MONGO_URI'))
-db = db_client['mp_app']
+db = db_client.get_database(name='mp_app',
+                            codec_options=DEFAULT_CODEC_OPTIONS.with_options(
+                                uuid_representation=UuidRepresentation.STANDARD))
 
 
 # FastAPI
