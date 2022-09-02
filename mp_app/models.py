@@ -6,7 +6,8 @@ Models
 from typing import List, Optional
 from enum import Enum
 from datetime import datetime
-from pydantic import BaseModel, EmailStr, UUID4
+from uuid import UUID, uuid4
+from pydantic import BaseModel, EmailStr, Field
 from geojson_pydantic import Point
 from beanie import Document, Indexed, Link
 
@@ -46,21 +47,21 @@ class GeoData(Document):
 
 
 class PhotoData(Document):
+    id: UUID = Field(default_factory=uuid4)
     name: str
-    uuid: UUID4
 
     class Settings:
         name = 'photo_data'
 
     def __repr__(self):
-        return f'<PhotoData {self.uuid}>'
+        return f'<PhotoData {self.id.hex}>'
 
     def __str__(self):
         return self.name
 
 
 class Person(Document):
-    email: EmailStr
+    email: Indexed(EmailStr, unique=True)
     username: str
     first_name: str
     last_name: str = None
@@ -73,6 +74,10 @@ class Person(Document):
 
     def __str__(self):
         return self.username
+
+    @classmethod
+    async def get_by_email(cls, email):
+        return await cls.find_one(cls.email == email)
 
 
 class MountainPass(Document):
@@ -115,8 +120,7 @@ class MountainPass(Document):
                     },
                     'photo': [
                         {
-                            'name': 'Overlook',
-                            'uuid': '46f1bda0-1c3c-4bba-a113-80c7433b520e'
+                            'name': 'Overlook'
                         }
                     ]
                 }
