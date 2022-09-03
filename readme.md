@@ -6,3 +6,7 @@ API for submitting mountain pass data
 * BeanieODM
 * MongoDB
 * Motor
+
+`GET '/submitData/{id}'`
+
+Returns mountain pass data by its ID
