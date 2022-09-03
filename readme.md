@@ -7,6 +7,12 @@ API for submitting mountain pass data
 * MongoDB
 * Motor
 
+## API Methods
+
 `GET '/submitData/{id}'`
 
 Returns mountain pass data by its ID
+
+`POST /submitData`
+
+Save new mountain pass data to DB
