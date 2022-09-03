@@ -86,10 +86,11 @@ class MountainPass(Document):
     title: str
     title_prefix: TitlePrefix
     alt_titles: Optional[List[str]] = None
-    timestamp: datetime
+    timestamp: datetime = datetime.now()
     person: Link[Person]
     geodata: Link[GeoData]
     photos: List[Link[PhotoData]]
+    connects: Optional[str] = None
     status: Status = Status.NEW
 
     class Config:
