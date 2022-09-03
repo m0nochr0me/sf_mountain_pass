@@ -3,6 +3,7 @@ MountainPass App
 Models
 """
 
+import json
 from typing import List, Optional
 from enum import Enum
 from datetime import datetime
@@ -48,7 +49,7 @@ class GeoData(Document):
 
 class PhotoData(Document):
     id: UUID = Field(default_factory=uuid4)
-    name: str
+    title: str
 
     class Settings:
         name = 'photo_data'
@@ -87,7 +88,7 @@ class MountainPass(Document):
     timestamp: datetime
     person: Link[Person]
     geodata: Link[GeoData]
-    photo: List[Link[PhotoData]]
+    photos: List[Link[PhotoData]]
     status: Status = Status.NEW
 
     class Config:
@@ -118,9 +119,9 @@ class MountainPass(Document):
                         },
                         'altitude': 2789
                     },
-                    'photo': [
+                    'photos': [
                         {
-                            'name': 'Overlook'
+                            'title': 'Overlook'
                         }
                     ]
                 }
@@ -134,6 +135,18 @@ class MountainPass(Document):
 
     def __str__(self):
         return self.title
+
+    # Custom validator, from
+    # https://stackoverflow.com/questions/65504438/how-to-add-both-file-and-json-body-in-a-fastapi-post-request/70640522#70640522
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate_to_json
+
+    @classmethod
+    def validate_to_json(cls, value):
+        if isinstance(value, str):
+            return cls(**json.loads(value))
+        return value
 
 
 __beanie_models__ = [MountainPass, Person, PhotoData, GeoData]
