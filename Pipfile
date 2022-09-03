@@ -11,6 +11,7 @@ email-validator = "*"
 uvicorn = "*"
 python-dotenv = "*"
 python-multipart = "*"
+aiofiles = "*"
 
 [dev-packages]
 

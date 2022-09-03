@@ -49,7 +49,7 @@ class GeoData(Document):
 
 class PhotoData(Document):
     id: UUID = Field(default_factory=uuid4)
-    name: str
+    title: str
 
     class Settings:
         name = 'photo_data'
@@ -88,7 +88,7 @@ class MountainPass(Document):
     timestamp: datetime
     person: Link[Person]
     geodata: Link[GeoData]
-    photo: List[Link[PhotoData]]
+    photos: List[Link[PhotoData]]
     status: Status = Status.NEW
 
     class Config:
@@ -119,9 +119,9 @@ class MountainPass(Document):
                         },
                         'altitude': 2789
                     },
-                    'photo': [
+                    'photos': [
                         {
-                            'name': 'Overlook'
+                            'title': 'Overlook'
                         }
                     ]
                 }
