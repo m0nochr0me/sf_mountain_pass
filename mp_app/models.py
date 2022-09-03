@@ -33,6 +33,11 @@ class TitlePrefix(BaseModel):
         return self.value
 
 
+class GeoDataOut(BaseModel):
+    data: Point
+    altitude: int
+
+
 class GeoData(Document):
     data: Point
     altitude: Indexed(int)
@@ -61,6 +66,12 @@ class PhotoData(Document):
         return self.name
 
 
+class PersonOut(BaseModel):
+    email: EmailStr
+    username: str
+    first_name: str
+
+
 class Person(Document):
     email: Indexed(EmailStr, unique=True)
     username: str
@@ -80,6 +91,18 @@ class Person(Document):
     @classmethod
     async def get_by_email(cls, email):
         return await cls.find_one(cls.email == email)
+
+
+class MountainPassOut(BaseModel):
+    title: str
+    title_prefix: TitlePrefix
+    alt_titles: Optional[List[str]]
+    timestamp: datetime
+    person: PersonOut
+    geodata: GeoDataOut
+    photos: List[PhotoData]
+    connects: Optional[str]
+    status: Status
 
 
 class MountainPass(Document):

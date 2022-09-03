@@ -1,6 +1,6 @@
 import aiofiles
 from fastapi import APIRouter, Response, HTTPException, UploadFile
-from beanie import WriteRules
+from beanie import WriteRules, PydanticObjectId
 from pathlib import Path
 from .models import *
 
@@ -47,3 +47,9 @@ async def submit_data(data: MountainPass, photo_files: list[UploadFile] | None =
 
     await data.save(link_rule=WriteRules.WRITE)
     return Response(status_code=201)
+
+
+@router.get('/submitData/{_id}', response_model=MountainPassOut)
+async def get_data_by_id(_id: PydanticObjectId) -> MountainPass:
+    data = await MountainPass.get(_id, fetch_links=True)
+    return data
