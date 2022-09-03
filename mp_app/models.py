@@ -66,6 +66,7 @@ class Person(Document):
     username: str
     first_name: str
     last_name: str = None
+    phone: str = None
 
     class Settings:
         name = 'person'
@@ -107,7 +108,8 @@ class MountainPass(Document):
                         'email': 'john_doe_1969@example.com',
                         'username': 'johndoe1969',
                         'first_name': 'John',
-                        'last_name': 'Doe'
+                        'last_name': 'Doe',
+                        'phone': '+19991234567'
                     },
                     'geodata': {
                         'data': {
