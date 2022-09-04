@@ -12,6 +12,7 @@ uvicorn = "*"
 python-dotenv = "*"
 python-multipart = "*"
 aiofiles = "*"
+mergedeep = "*"
 
 [dev-packages]
 
