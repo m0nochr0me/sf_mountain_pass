@@ -16,3 +16,7 @@ Returns mountain pass data by its ID
 `POST /submitData`
 
 Save new mountain pass data to DB
+
+`PATCH /submitData/{id}` 
+
+Edit existing mountain pass data

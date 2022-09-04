@@ -1,6 +1,6 @@
 import aiofiles
 from fastapi import APIRouter, Response, HTTPException, UploadFile
-from beanie import WriteRules, PydanticObjectId
+from beanie import WriteRules, DeleteRules, PydanticObjectId
 from pathlib import Path
 from .models import *
 
@@ -53,3 +53,45 @@ async def submit_data(data: MountainPass, photo_files: list[UploadFile] | None =
 async def get_data_by_id(_id: PydanticObjectId) -> MountainPass:
     data = await MountainPass.get(_id, fetch_links=True)
     return data
+
+
+@router.patch('/submitData/{_id}')
+async def edit_data_by_id(_id: PydanticObjectId, req: MountainPass, photo_files: list[UploadFile] | None = None):
+    """Straightforward replace old MountainPass with new one"""
+
+    data = await MountainPass.get(_id, fetch_links=True)
+    if not data:
+        return {'state': 0,
+                'message': 'Data not found'}
+
+    if data.status != Status.NEW:
+        return {'state': 0,
+                'message': 'Status not New'}
+
+    req.person = data.person
+
+    if len(req.photos) != len(photo_files):
+        return {'state': 0,
+                'message': 'Invalid photo count'}
+
+    for photo in zip(photo_files, req.photos):
+        try:
+            photo_id: UUID = photo[1].id
+            suffix = Path(photo[0].filename).suffix
+            uploaded_file: Path = upload_dir / Path(photo_id.hex).with_suffix(suffix)
+            # TODO: check if file already exists
+            # TODO: delete unreferenced files
+            async with aiofiles.open(uploaded_file, 'wb') as f:
+                while chunk := await photo[0].read(2**20):
+                    await f.write(chunk)
+        except Exception:
+            return Response(status_code=500)
+        finally:
+            await photo[0].close()
+
+    await data.delete(link_rule=DeleteRules.DELETE_LINKS)
+    await req.save(link_rule=WriteRules.WRITE)
+
+    return {'state': 1,
+            'message': 'OK',
+            '_id': req.id}
