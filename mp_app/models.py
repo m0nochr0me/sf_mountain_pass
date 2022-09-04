@@ -14,6 +14,7 @@ from beanie import Document, Indexed, Link
 
 
 class Status(Enum):
+    """Available MountainPass data statuses"""
     NEW = 0
     PENDING = 1
     ACCEPTED = 2
@@ -21,6 +22,7 @@ class Status(Enum):
 
 
 class TitlePrefix(BaseModel):
+    """Title prefix model to be stored in DB in the future"""
     value: str
 
     class Settings:
@@ -34,11 +36,13 @@ class TitlePrefix(BaseModel):
 
 
 class GeoDataOut(BaseModel):
+    """GeoData response model"""
     data: Point
     altitude: int
 
 
 class GeoData(Document):
+    """GeoData DB representation"""
     data: Point
     altitude: Indexed(int)
 
@@ -53,6 +57,11 @@ class GeoData(Document):
 
 
 class PhotoData(Document):
+    """
+    PhotoData DB representation
+
+    Actual photo is stored in filesystem, and served to client by web-server
+    """
     id: UUID = Field(default_factory=uuid4)
     title: str
 
@@ -67,12 +76,14 @@ class PhotoData(Document):
 
 
 class PersonOut(BaseModel):
+    """Person response model"""
     email: EmailStr
     username: str
     first_name: str
 
 
 class Person(Document):
+    """Person DB representation"""
     email: Indexed(EmailStr, unique=True)
     username: str
     first_name: str
@@ -94,6 +105,7 @@ class Person(Document):
 
 
 class MountainPassOut(BaseModel):
+    """MountainPass response model"""
     title: str
     title_prefix: TitlePrefix
     alt_titles: Optional[List[str]]
@@ -106,6 +118,7 @@ class MountainPassOut(BaseModel):
 
 
 class MountainPass(Document):
+    """MountainPass DB representation"""
     title: str
     title_prefix: TitlePrefix
     alt_titles: Optional[List[str]] = None
