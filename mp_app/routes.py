@@ -15,7 +15,7 @@ upload_dir = Path.cwd() / 'upload'
 
 
 @router.post('/')
-async def submit_data(data: MountainPass, photo_files: list[UploadFile] | None = None):
+async def submit_data(data: MountainPass, photo_files: list[UploadFile] | None = None) -> dict:
     """
     Receive MountainPass data and store it in DB
     """
@@ -25,10 +25,12 @@ async def submit_data(data: MountainPass, photo_files: list[UploadFile] | None =
         data.person = person_db
 
     if data.status and data.status != Status.NEW:
-        return HTTPException(400, 'Invalid status')
+        return {'state': 0,
+                'message': 'Status not New'}
 
     if len(data.photos) != len(photo_files):
-        return HTTPException(400, 'Invalid photo count')
+        return {'state': 0,
+                'message': 'Photo count mismatch'}
 
     # Upload photos and rename them as PhotoData object id
     # https://stackoverflow.com/questions/73442335/how-to-upload-a-large-file-%e2%89%a53gb-to-fastapi-backend/73443824#73443824
@@ -40,34 +42,43 @@ async def submit_data(data: MountainPass, photo_files: list[UploadFile] | None =
             async with aiofiles.open(uploaded_file, 'wb') as f:
                 while chunk := await photo[0].read(2**20):
                     await f.write(chunk)
-        except Exception:
-            return Response(status_code=500)
+        except Exception as e:
+            return {'state': 0,
+                    'message': f'Photo saving error: {e}'}
         finally:
             await photo[0].close()
 
     await data.save(link_rule=WriteRules.WRITE)
-    return Response(status_code=201)
+    return {'state': 1,
+            'message': 'OK',
+            '_id': data.id}
 
 
 @router.get('/{_id}', response_model=MountainPassOut)
-async def get_data_by_id(_id: PydanticObjectId) -> MountainPass:
+async def get_data_by_id(_id: PydanticObjectId) -> MountainPass | dict:
     """Return MountainPass data with given id or 404"""
     data = await MountainPass.get(_id, fetch_links=True)
     if not data:
-        return Response(status_code=404)
+        return {'state': 0,
+                'message': 'Data not found'}
     return data
 
 
 @router.get('/', response_model=List[MountainPassOut])
-async def get_data_by_email(user__email: str):
+async def get_data_by_email(user__email: str) -> List[MountainPass] | dict:
     """Return List of MountainPass data for Person with given user__email or empty List"""
 
     data = await MountainPass.find(MountainPass.person.email == user__email, fetch_links=True).to_list()
+    if not data:
+        return {'state': 0,
+                'message': 'Data not found'}
     return data
 
 
 @router.patch('/{_id}')
-async def edit_data_by_id(_id: PydanticObjectId, req: MountainPass, photo_files: list[UploadFile] | None = None):
+async def edit_data_by_id(_id: PydanticObjectId,
+                          req: MountainPass,
+                          photo_files: list[UploadFile] | None = None) -> dict:
     """Straightforward replace old MountainPass with new one"""
 
     data = await MountainPass.get(_id, fetch_links=True)
@@ -95,8 +106,9 @@ async def edit_data_by_id(_id: PydanticObjectId, req: MountainPass, photo_files:
             async with aiofiles.open(uploaded_file, 'wb') as f:
                 while chunk := await photo[0].read(2**20):
                     await f.write(chunk)
-        except Exception:
-            return Response(status_code=500)
+        except Exception as e:
+            return {'state': 0,
+                    'message': f'Photo saving error: {e}'}
         finally:
             await photo[0].close()
 
