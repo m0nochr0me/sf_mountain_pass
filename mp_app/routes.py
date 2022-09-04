@@ -9,17 +9,12 @@ from beanie import WriteRules, DeleteRules, PydanticObjectId
 from pathlib import Path
 from .models import *
 
-router = APIRouter(tags=['MountainPass'])
+router = APIRouter(prefix='/submitData', tags=['MountainPass'])
 
 upload_dir = Path.cwd() / 'upload'
 
 
-@router.get('/')
-async def root():
-    return {'message': 'OK'}
-
-
-@router.post('/submitData')
+@router.post('/')
 async def submit_data(data: MountainPass, photo_files: list[UploadFile] | None = None):
     """
     Receive MountainPass data and store it in DB
@@ -54,7 +49,7 @@ async def submit_data(data: MountainPass, photo_files: list[UploadFile] | None =
     return Response(status_code=201)
 
 
-@router.get('/submitData/{_id}', response_model=MountainPassOut)
+@router.get('/{_id}', response_model=MountainPassOut)
 async def get_data_by_id(_id: PydanticObjectId) -> MountainPass:
     """Return MountainPass data with given id or 404"""
     data = await MountainPass.get(_id, fetch_links=True)
@@ -63,7 +58,7 @@ async def get_data_by_id(_id: PydanticObjectId) -> MountainPass:
     return data
 
 
-@router.get('/submitData', response_model=List[MountainPassOut])
+@router.get('/', response_model=List[MountainPassOut])
 async def get_data_by_email(user__email: str):
     """Return List of MountainPass data for Person with given user__email or empty List"""
 
@@ -71,7 +66,7 @@ async def get_data_by_email(user__email: str):
     return data
 
 
-@router.patch('/submitData/{_id}')
+@router.patch('/{_id}')
 async def edit_data_by_id(_id: PydanticObjectId, req: MountainPass, photo_files: list[UploadFile] | None = None):
     """Straightforward replace old MountainPass with new one"""
 
