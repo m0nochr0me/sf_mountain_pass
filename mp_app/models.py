@@ -49,7 +49,7 @@ class GeoData(Document):
         return f'<GeoData {self.data.coordinates}|{self.altitude}>'
 
     def __str__(self):
-        return self.data.coordinates
+        return str(self.data.coordinates)
 
 
 class PhotoData(Document):
@@ -63,7 +63,7 @@ class PhotoData(Document):
         return f'<PhotoData {self.id.hex}>'
 
     def __str__(self):
-        return self.name
+        return self.title
 
 
 class PersonOut(BaseModel):
