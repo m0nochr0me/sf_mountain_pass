@@ -51,7 +51,10 @@ async def submit_data(data: MountainPass, photo_files: list[UploadFile] | None =
 
 @router.get('/submitData/{_id}', response_model=MountainPassOut)
 async def get_data_by_id(_id: PydanticObjectId) -> MountainPass:
+    """Return MountainPass data with given id or 404"""
     data = await MountainPass.get(_id, fetch_links=True)
+    if not data:
+        return Response(status_code=404)
     return data
 
 
