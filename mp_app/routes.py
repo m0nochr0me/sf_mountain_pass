@@ -55,6 +55,14 @@ async def get_data_by_id(_id: PydanticObjectId) -> MountainPass:
     return data
 
 
+@router.get('/submitData', response_model=List[MountainPassOut])
+async def get_data_by_email(user__email: str):
+    """Return List of MountainPass data for Person with given user__email or empty List"""
+
+    data = await MountainPass.find(MountainPass.person.email == user__email, fetch_links=True).to_list()
+    return data
+
+
 @router.patch('/submitData/{_id}')
 async def edit_data_by_id(_id: PydanticObjectId, req: MountainPass, photo_files: list[UploadFile] | None = None):
     """Straightforward replace old MountainPass with new one"""
