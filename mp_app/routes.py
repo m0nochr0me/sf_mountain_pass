@@ -1,3 +1,8 @@
+"""
+MountainPass App
+Routes
+"""
+
 import aiofiles
 from fastapi import APIRouter, Response, HTTPException, UploadFile
 from beanie import WriteRules, DeleteRules, PydanticObjectId
