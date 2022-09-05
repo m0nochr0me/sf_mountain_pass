@@ -3,6 +3,7 @@ MountainPass App
 Routes
 """
 
+import os
 import aiofiles
 from fastapi import APIRouter, Response, HTTPException, UploadFile
 from beanie import WriteRules, DeleteRules, PydanticObjectId
@@ -11,7 +12,7 @@ from .models import *
 
 router = APIRouter(prefix='/submitData', tags=['MountainPass'])
 
-upload_dir = Path.cwd() / 'upload'
+upload_dir = Path(os.environ.get('FSTR_UPLOAD_DIR'))
 
 
 @router.post('/')

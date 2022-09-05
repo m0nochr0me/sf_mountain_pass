@@ -15,7 +15,7 @@ Edit `compose.yaml` to set mongo credentials
 docker-compose -f compose.yaml up
 ```
 
-Edit `.env` file or set `FSTR_MONGO_URI` environment variable
+Edit `.env` file or set `FSTR_MONGO_URI`, `FSTR_UPLOAD_DIR` environment variables
 
 ```shell
 uvicorn main:app --port 8089 --reload
