@@ -13,6 +13,8 @@ python-dotenv = "*"
 python-multipart = "*"
 aiofiles = "*"
 mergedeep = "*"
+requests = "*"
+pytest = "*"
 
 [dev-packages]
 
